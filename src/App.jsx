@@ -1,35 +1,93 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from "react";
+import "./App.css";
+import { sameWords } from "../sameWords";
+
+const wordsPerPage = 10;
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [currentPage, setCurrentPage] = useState(0);
+  const [filteredWords, setFilteredWords] = useState([]);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const filterWords = (letter) => {
+    const filtered = sameWords.filter((word) => word.startsWith(letter));
+    setFilteredWords(filtered);
+    setCurrentPage(0); // Reset the current page to 0 when filtering
+    setTotalPages(Math.ceil(filtered.length / wordsPerPage)); // Calculate total pages
+  };
+
+  const displayWords = () => {
+    const startIndex = currentPage * wordsPerPage;
+    const endIndex = startIndex + wordsPerPage;
+    return filteredWords
+      .slice(startIndex, endIndex)
+      .map((word, index) => <div key={index}>{word}</div>);
+  };
+
+  const nextPage = () => {
+    if ((currentPage + 1) * wordsPerPage < filteredWords.length) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const prevPage = () => {
+    if (currentPage > 0) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="container">
+      <h1>The same words in Russian and Bulgarian</h1>
+      <div className="alphabet">
+        {Array.from(Array(32).keys()).map((letterIndex) => (
+          <button
+            key={letterIndex}
+            className="letter"
+            onClick={() => filterWords(String.fromCharCode(1072 + letterIndex))}
+          >
+            {String.fromCharCode(1072 + letterIndex)}
+          </button>
+        ))}
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+      <div className="sameWords-container">{displayWords()}</div>
+      <div className="pagination">
+        <button
+          onClick={prevPage}
+          disabled={currentPage === 0}
+          style={{
+            borderTopLeftRadius: "10px", // Radius for the top-left corner
+            borderBottomLeftRadius: "10px", // Radius for the bottom-left corner
+            borderTopRightRadius: "0", // No radius for the top-right corner
+            borderBottomRightRadius: "0", // No radius for the bottom-right corner
+          }}
+        >
+          Previous
         </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        {totalPages > 0 && (
+          <div className="page-count">
+            <hr className="line" /> {/* Line above */}
+            <span>
+              {currentPage + 1} of {totalPages}
+            </span>
+            <hr className="line" /> {/* Line below */}
+          </div>
+        )}
+        <button
+          onClick={nextPage}
+          disabled={(currentPage + 1) * wordsPerPage >= filteredWords.length}
+          style={{
+            borderTopLeftRadius: "0", // Radius for the top-left corner
+            borderBottomLeftRadius: "0", // Radius for the bottom-left corner
+            borderTopRightRadius: "10px", // No radius for the top-right corner
+            borderBottomRightRadius: "10px", // No radius for the bottom-right corner
+          }}
+        >
+          Next
+        </button>
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    </div>
+  );
 }
 
-export default App
+export default App;

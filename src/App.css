@@ -40,3 +40,53 @@
 .read-the-docs {
   color: #888;
 }
+
+/* App.css */
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.alphabet {
+  margin-bottom: 20px;
+}
+
+.letter {
+  padding: 15px 25px;
+  margin: 0 5px 5px;
+  cursor: pointer;
+}
+
+.words-container {
+  margin-bottom: 20px;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 25px;
+}
+
+.page-count {
+  margin: 0; /* Adjust margin as needed */
+}
+.page-count span {
+  display: flex;
+  margin: 13.5px;
+}
+
+.line {
+  flex-grow: 1;
+  border: none; /* Remove default border */
+  border-top: 1px solid #646cffaa; /* Set border color */
+}
+
+.pagination-text {
+  margin: 0 10px;
+}
+.pagination button {
+  padding: 15px 25px;
+  margin: 0;
+  cursor: pointer;
+}
