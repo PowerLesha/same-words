@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./App.css";
 import { sameWords } from "../sameWords";
+import { FaTimes, FaSearch } from "react-icons/fa";
 
 const wordsPerPage = 10;
 
@@ -10,6 +11,9 @@ function App() {
   const [totalPages, setTotalPages] = useState(0);
   const [wordsWithLetter, setWordsWithLetter] = useState(0);
   const [currentLetter, setCurrentLetter] = useState(null);
+  const [searchWord, setSearchWord] = useState("");
+  const [wordExists, setWordExists] = useState(null);
+  const [checkWordVisible, setCheckWordVisible] = useState(false);
 
   const filterWords = (letter) => {
     const filtered = sameWords.filter((word) => word.startsWith(letter));
@@ -18,6 +22,11 @@ function App() {
     setCurrentPage(0); // Reset the current page to 0 when filtering
     setWordsWithLetter(filtered.length);
     setTotalPages(Math.ceil(filtered.length / wordsPerPage)); // Calculate total pages
+  };
+
+  const checkWordExists = () => {
+    const lowercaseWord = searchWord.toLowerCase();
+    setWordExists(sameWords.includes(lowercaseWord));
   };
 
   const displayWords = () => {
@@ -51,7 +60,39 @@ function App() {
   return (
     <div className="container">
       <h1>The same words in Russian and Bulgarian</h1>
-
+      <div className="search-container">
+        <div
+          className="popup-trigger"
+          onClick={() => setCheckWordVisible(!checkWordVisible)}
+        >
+          Also you can check if the same words exist in Russian and Bulgarian by
+          clicking on this icon
+          {checkWordVisible ? (
+            <FaTimes className="icon" />
+          ) : (
+            <FaSearch className="icon" />
+          )}
+        </div>
+        {checkWordVisible && (
+          <div className="popup-content">
+            <input
+              type="text"
+              placeholder="Enter a word"
+              className="check-input"
+              value={searchWord}
+              onChange={(e) => setSearchWord(e.target.value)}
+            />
+            <button className="check-button" onClick={checkWordExists}>
+              Check
+            </button>
+            {wordExists && <div>The word exists in Russian and Bulgarian.</div>}
+            {wordExists === false && (
+              <div>The word does not exist in Russian and Bulgarian.</div>
+            )}
+            {wordExists === null && ""}
+          </div>
+        )}
+      </div>
       <div className="alphabet">
         {Array.from(Array(32).keys()).map((letterIndex) => (
           <button
