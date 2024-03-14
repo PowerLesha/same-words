@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { sameWords } from "../sameWords";
 import { FaTimes, FaSearch } from "react-icons/fa";
@@ -14,7 +14,16 @@ function App() {
   const [searchWord, setSearchWord] = useState("");
   const [wordExists, setWordExists] = useState(null);
   const [checkWordVisible, setCheckWordVisible] = useState(false);
+  const [error, setError] = useState(false);
 
+  useEffect(() => {
+    error && setWordExists(null);
+    if (!checkWordVisible) {
+      setWordExists(null);
+      setError(false);
+      setSearchWord("");
+    }
+  }, [wordExists, error, checkWordVisible]);
   const filterWords = (letter) => {
     const filtered = sameWords.filter((word) => word.startsWith(letter));
     setFilteredWords(filtered);
@@ -26,7 +35,10 @@ function App() {
 
   const checkWordExists = () => {
     const lowercaseWord = searchWord.toLowerCase();
-    setWordExists(sameWords.includes(lowercaseWord));
+    if (searchWord.trim() !== "") {
+      setWordExists(sameWords.includes(lowercaseWord));
+      setError(false);
+    } else setError(true);
   };
 
   const displayWords = () => {
@@ -77,14 +89,17 @@ function App() {
           <div className="popup-content">
             <input
               type="text"
-              placeholder="Enter a word"
-              className="check-input"
+              placeholder="Enter a word..."
+              className={error ? "check-input error" : "check-input"}
               value={searchWord}
               onChange={(e) => setSearchWord(e.target.value)}
             />
             <button className="check-button" onClick={checkWordExists}>
               Check
             </button>
+            {error && (
+              <div className="error-text">You have to type something</div>
+            )}
             {wordExists && <div>The word exists in Russian and Bulgarian.</div>}
             {wordExists === false && (
               <div>The word does not exist in Russian and Bulgarian.</div>
